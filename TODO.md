@@ -1,0 +1,2 @@
+- [x] Update mqueue.c: Change P2 burst time from 0 to 7 and update the printf statement for digit 2.
+- [x] Update main.txt: Change P2 burst time from 0 to 7 and update the output statement for digit 2.

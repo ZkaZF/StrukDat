@@ -1,0 +1,305 @@
+Type Proses = < IDProses: character,
+                BurstTime: integer >
+
+Type Queue = < T: array[1..5] of Proses,
+              head: integer,
+              tail: integer >
+
+{Queue model untuk penjadwalan proses CPU}
+{Kapasitas maksimal 5 proses}
+{head = indeks elemen terdepan, tail = indeks elemen terakhir}
+
+Function MakeProses(id: character, bt: integer) -> Proses
+{Membuat proses baru dengan ID dan burst time}
+
+Procedure CreateQueue(output Q: Queue)
+{I.S: -, F.S: Q terdefinisi}
+{Proses: menginisialisasi queue kosong}
+
+Function isEmptyQueue(Q: Queue) -> boolean
+{Mengembalikan true jika queue kosong}
+
+Function isFullQueue(Q: Queue) -> boolean
+{Mengembalikan true jika queue penuh}
+
+Function Head(Q: Queue) -> integer
+{Mengembalikan posisi elemen terdepan}
+
+Function Tail(Q: Queue) -> integer
+{Mengembalikan posisi elemen terakhir}
+
+Function InfoHead(Q: Queue) -> Proses
+{Mengembalikan data elemen di head}
+
+Function InfoTail(Q: Queue) -> Proses
+{Mengembalikan data elemen di tail}
+
+Procedure Enqueue(input/output Q: Queue, input P: Proses)
+{I.S: Q, P terdefinisi, Q mungkin kosong}
+{F.S: Q tetap, atau infoTail(Q) = P}
+{Proses: menambah elemen P ke tail queue}
+
+Procedure Dequeue(input/output Q: Queue, output P: Proses)
+{I.S: Q terdefinisi, mungkin kosong}
+{F.S: Q tetap, atau P berisi infoHead(Q) lama}
+{Proses: menghapus elemen dari head Q dan menggesernya}
+
+Procedure PrintQueue(input Q: Queue)
+{I.S: -; F.S: -; Proses: menampilkan seluruh isi wadah Q}
+
+Procedure ViewQueue(input Q: Queue)
+{I.S: -; F.S: -; Proses: menampilkan elemen berisi Q}
+
+Procedure SJFScheduling(input Q: Queue)
+{I.S: Q terdefinisi}
+{F.S: -}
+{Proses: melakukan penjadwalan proses dengan algoritma SJF}
+
+Function MakeProses(id: character, bt: integer) -> Proses
+
+Kamus Lokal
+    p: Proses
+
+Algoritma
+    p.IDProses ← id
+    p.BurstTime ← bt
+    return p
+
+Procedure CreateQueue(output Q: Queue)
+{Inisialisasi queue kosong}
+
+Kamus Lokal
+    i: integer
+
+Algoritma
+    for i ← 1 to 5 do
+        Q.T[i].IDProses ← ' '
+        Q.T[i].BurstTime ← -1
+    endfor
+    Q.head ← 0
+    Q.tail ← 0
+
+Function isEmptyQueue(Q: Queue) -> boolean
+{Mengecek apakah queue kosong}
+
+Kamus Lokal
+    {tidak ada}
+
+Algoritma
+    return (Q.head = 0)
+
+Function isFullQueue(Q: Queue) -> boolean
+{Mengecek apakah queue penuh}
+
+Kamus Lokal
+    {tidak ada}
+
+Algoritma
+    return (Q.tail = 5)
+
+
+Function Head(Q: Queue) -> integer
+{Mengembalikan posisi head}
+
+Kamus Lokal
+    {tidak ada}
+
+Algoritma
+    return Q.head
+
+Function Tail(Q: Queue) -> integer
+{Mengembalikan posisi tail}
+
+Kamus Lokal
+    {tidak ada}
+
+Algoritma
+    return Q.tail
+
+Function InfoHead(Q: Queue) -> Proses
+{Mengembalikan nilai elemen di posisi head}
+
+Kamus Lokal
+    {tidak ada}
+
+Algoritma
+    if isEmptyQueue(Q) then
+        return {' ', -1}
+    else
+        return Q.T[Q.head]
+    endif
+
+Function InfoTail(Q: Queue) -> Proses
+{Mengembalikan nilai elemen di posisi tail}
+
+Kamus Lokal
+    {tidak ada}
+
+Algoritma
+    if isEmptyQueue(Q) then
+        return {' ', -1}
+    else
+        return Q.T[Q.tail]
+    endif
+
+Procedure Enqueue(input/output Q: Queue, input P: Proses)
+{Menambahkan elemen di tail}
+
+Kamus Lokal
+    {tidak ada}
+
+Algoritma
+    if not isFullQueue(Q) then
+        if isEmptyQueue(Q) then
+            Q.head ← 1
+        endif
+        Q.tail ← Q.tail + 1
+        Q.T[Q.tail] ← P
+    endif
+
+Procedure Dequeue(input/output Q: Queue, output P: Proses)
+{Menghapus elemen dari head}
+
+Kamus Lokal
+    i: integer
+
+Algoritma
+    if not isEmptyQueue(Q) then
+        P ← Q.T[Q.head]
+        
+        {Geser semua elemen ke kiri}
+        for i ← Q.head to Q.tail - 1 do
+            Q.T[i] ← Q.T[i + 1]
+        endfor
+        
+        Q.T[Q.tail] ← {' ', -1}
+        Q.tail ← Q.tail - 1
+        
+        if Q.tail = 0 then
+            Q.head ← 0
+        endif
+    else
+        P ← {' ', -1}
+    endif
+
+Procedure PrintQueue(input Q: Queue)
+{Menampilkan seluruh isi wadah}
+
+Kamus Lokal
+    i: integer
+
+Algoritma
+    for i ← 1 to 5 do
+        output("[", Q.T[i].IDProses, ", BT:", Q.T[i].BurstTime, "] ")
+    endfor
+    output() 
+
+Procedure ViewQueue(input Q: Queue)
+{Menampilkan elemen yang terisi saja}
+
+Kamus Lokal
+    i: integer
+
+Algoritma
+    output()
+    output("=== VIEW QUEUE ===")
+    
+    if isEmptyQueue(Q) then
+        output("Queue kosong!")
+        return
+    endif
+    
+    output("Banyak elemen: ", Q.tail - Q.head + 1)
+    output("Head: ", Q.head, ", Tail: ", Q.tail)
+    output()
+    
+    for i ← Q.head to Q.tail do
+        output("Proses ", i - Q.head + 1, ": IDProses=", Q.T[i].IDProses, 
+               ", BurstTime=", Q.T[i].BurstTime)
+    endfor
+
+
+Procedure SJFScheduling(input Q: Queue)
+{Penjadwalan proses dengan algoritma SJF (Shortest Job First)}
+
+Kamus Lokal
+    temp: Queue
+    i, idx2, j: integer
+    minIdx, minBT: integer
+    currentTime, startTime, endTime: integer
+    totalBT, processCount: integer
+    P: Proses
+    newTemp: Queue
+
+Algoritma
+    output()
+    output("=== PENJADWALAN PROSES (SJF) ===")
+    
+    if isEmptyQueue(Q) then
+        output("Queue kosong!")
+        return
+    endif
+    
+    {Membuat kopian queue untuk diproses}
+    CreateQueue(temp)
+    for i ← Q.head to Q.tail do
+        Enqueue(temp, Q.T[i])
+    endfor
+    
+    {Menampilkan header tabel}
+    output()
+    output("Urutan Eksekusi Proses (SJF):")
+    output("Proses      Burst Time   Mulai        Selesai")
+    output("-------------------------------------------------")
+    
+    {Inisialisasi variabel}
+    currentTime ← 0
+    totalBT ← 0
+    processCount ← 0
+    
+    {Loop hingga queue kosong}
+    while not isEmptyQueue(temp) do
+        {Cari proses dengan burst time terkecil}
+        minIdx ← 0
+        minBT ← temp.T[temp.head].BurstTime
+        
+        for idx2 ← temp.head + 1 to temp.tail do
+            if temp.T[idx2].BurstTime < minBT then
+                minBT ← temp.T[idx2].BurstTime
+                minIdx ← idx2 - temp.head
+            endif
+        endfor
+        
+        {Ambil proses dengan burst time terkecil}
+        if minIdx = 0 then
+            P ← Dequeue(temp)
+        else
+            P ← temp.T[temp.head + minIdx]
+            
+            {Buat queue baru tanpa proses yang dipilih}
+            CreateQueue(newTemp)
+            for j ← temp.head to temp.tail do
+                if j ≠ temp.head + minIdx then
+                    Enqueue(newTemp, temp.T[j])
+                endif
+            endfor
+            temp ← newTemp
+        endif
+        
+        {Hitung waktu eksekusi}
+        startTime ← currentTime
+        endTime ← currentTime + P.BurstTime
+        currentTime ← endTime
+        
+        {Tampilkan hasil eksekusi proses}
+        output(P.IDProses, "          ", P.BurstTime, "           ", 
+               startTime, "           ", endTime)
+        
+        processCount ← processCount + 1
+        totalBT ← totalBT + P.BurstTime
+    endwhile
+    
+    {Menampilkan ringkasan}
+    output("-------------------------------------------------")
+    output("Total Burst Time: ", totalBT)
+    output("Jumlah Proses: ", processCount)
