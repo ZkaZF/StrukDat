@@ -1,7 +1,7 @@
 /* File : list3.c */
 /* Deskripsi : realisasi body ADT list berkait ganda representasi fisik pointer */
 /* NIM & Nama : 24060124140161/Azka Wayasy Al Hafizh */
-/* Tanggal : 20 November 2024 */
+/* Tanggal : 20 November 2025 */
 #include "list3.h"
 #include <stdlib.h>
 #include <stdio.h>

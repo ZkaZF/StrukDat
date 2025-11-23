@@ -1,7 +1,7 @@
 /* File : list3.h */
 /* Deskripsi : ADT list berkait dengan representasi fisik pointer */
-/* NIM & Nama : */
-/* Tanggal : */
+/* NIM & Nama :24060124140161 - Azka Wayasy Al Hafizh */
+/* Tanggal : 20 November 2025 */
 #ifndef list3_H
 #define list3_H
 
