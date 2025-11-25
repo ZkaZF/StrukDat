@@ -525,7 +525,6 @@ void DeleteAllX(List3 *L, infotype X)
     {
         if (info(P) == X)
         {
-            address temp = P;
             P = next(P);
             DeleteX(L, X);
         }
