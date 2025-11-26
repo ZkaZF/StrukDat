@@ -1,0 +1,336 @@
+{===== DEFINISI TYPE =====}
+type infotype = character
+type node = < Info : infotype,
+              Left : BinTree,
+              Right : BinTree >
+type BinTree = pointer to node
+
+{===== KONSTRUKTOR =====}
+
+function Tree(Akar:infotype, L:BinTree, R:BinTree) -> BinTree
+{ Menghasilkan sebuah pohon biner dari Akar, L, dan R }
+Deklarasi
+    P : BinTree
+Algoritma
+    Alokasi(P)
+    if (P ≠ Nil) then
+        Info(P) <- Akar
+        Left(P) <- L
+        Right(P) <- R
+    endif
+    return P
+
+procedure MakeTree(input Akar:infotype, input L:BinTree, input R:BinTree, output P:BinTree)
+{ I.S. Sembarang }
+{ F.S. Menghasilkan sebuah pohon P }
+Algoritma
+    Alokasi(P)
+    if (P ≠ Nil) then
+        Info(P) <- Akar
+        Left(P) <- L
+        Right(P) <- R
+    endif
+
+{===== SELEKTOR =====}
+
+function GetAkar(P:BinTree) -> infotype
+{ Mengirimkan nilai Akar pohon biner P }
+Algoritma
+    return Info(P)
+
+function GetLeft(P:BinTree) -> BinTree
+{ Mengirimkan Anak Kiri pohon biner P }
+Algoritma
+    return Left(P)
+
+function GetRight(P:BinTree) -> BinTree
+{ Mengirimkan Anak Kanan pohon biner P }
+Algoritma
+    return Right(P)
+
+{===== PREDIKAT =====}
+
+function IsEmptyTree(P:BinTree) -> boolean
+{ Mengirimkan true jika pohon biner kosong }
+Algoritma
+    return (P = Nil)
+
+function IsDaun(P:BinTree) -> boolean
+{ Mengirimkan true jika pohon biner tidak kosong, 
+  namun anak kiri dan anak kanan kosong }
+Algoritma
+    return (P ≠ Nil) and (Left(P) = Nil) and (Right(P) = Nil)
+
+function IsBiner(P:BinTree) -> boolean
+{ Mengirimkan true jika P adalah pohon biner: 
+  mempunyai subpohon kiri dan subpohon kanan }
+Algoritma
+    return (P ≠ Nil) and (Left(P) ≠ Nil) and (Right(P) ≠ Nil)
+
+function IsUnerLeft(P:BinTree) -> boolean
+{ Mengirimkan true jika P adalah pohon unerleft: 
+  hanya mempunyai subpohon kiri }
+Algoritma
+    return (P ≠ Nil) and (Left(P) ≠ Nil) and (Right(P) = Nil)
+
+function IsUnerRight(P:BinTree) -> boolean
+{ Mengirimkan true jika P adalah pohon unerright: 
+  hanya mempunyai subpohon kanan }
+Algoritma
+    return (P ≠ Nil) and (Left(P) = Nil) and (Right(P) ≠ Nil)
+
+function IsSkewLeft(P:BinTree) -> boolean
+{ Mengirim true jika P adalah pohon condong kiri }
+Algoritma
+    if (P = Nil) then
+        return true
+    else
+        if (Right(P) ≠ Nil) then
+            return false
+        else
+            return IsSkewLeft(Left(P))
+        endif
+    endif
+
+function IsSkewRight(P:BinTree) -> boolean
+{ Mengirim true jika P adalah pohon condong kanan }
+Algoritma
+    if (P = Nil) then
+        return true
+    else
+        if (Left(P) ≠ Nil) then
+            return false
+        else
+            return IsSkewRight(Right(P))
+        endif
+    endif
+
+{===== PENJELAJAHAN =====}
+
+procedure PrintTree(input P:BinTree, input h:integer)
+{ I.S. P terdefinisi, h adalah jarak indentasi }
+{ F.S. Semua simpul P sudah ditulis dengan indentasi }
+Deklarasi
+    i : integer
+Algoritma
+    if (P ≠ Nil) then
+        for i <- 1 to h do
+            output('  ')
+        endfor
+        output(Info(P))
+        
+        if (Left(P) ≠ Nil) or (Right(P) ≠ Nil) then
+            PrintTree(Left(P), h+1)
+            PrintTree(Right(P), h+1)
+        endif
+    endif
+
+procedure Preorder(input P:BinTree)
+{ I.S. P terdefinisi }
+{ F.S. Semua simpul P sudah diproses secara Preorder: 
+  akar, kiri, kanan }
+Algoritma
+    if (P ≠ Nil) then
+        Proses(Info(P))
+        Preorder(Left(P))
+        Preorder(Right(P))
+    endif
+
+procedure Inorder(input P:BinTree)
+{ I.S. P terdefinisi }
+{ F.S. Semua simpul P sudah diproses secara Inorder: 
+  kiri, akar, kanan }
+Algoritma
+    if (P ≠ Nil) then
+        Inorder(Left(P))
+        Proses(Info(P))
+        Inorder(Right(P))
+    endif
+
+procedure Postorder(input P:BinTree)
+{ I.S. P terdefinisi }
+{ F.S. Semua simpul P sudah diproses secara Postorder: 
+  kiri, kanan, akar }
+Algoritma
+    if (P ≠ Nil) then
+        Postorder(Left(P))
+        Postorder(Right(P))
+        Proses(Info(P))
+    endif
+
+{===== PENGHITUNGAN =====}
+
+function NbElm(P:BinTree) -> integer
+{ Mengirimkan banyaknya node dari P }
+Algoritma
+    if (P = Nil) then
+        return 0
+    else
+        return 1 + NbElm(Left(P)) + NbElm(Right(P))
+    endif
+
+function NbDaun(P:BinTree) -> integer
+{ Mengirimkan banyaknya daun pohon biner P }
+Algoritma
+    if (P = Nil) then
+        return 0
+    else
+        if IsDaun(P) then
+            return 1
+        else
+            return NbDaun(Left(P)) + NbDaun(Right(P))
+        endif
+    endif
+
+{===== PENCARIAN =====}
+
+function SearchX(P:BinTree, X:infotype) -> boolean
+{ Mengirimkan true jika ada node dari P yang bernilai X }
+Algoritma
+    if (P = Nil) then
+        return false
+    else
+        if (Info(P) = X) then
+            return true
+        else
+            return SearchX(Left(P), X) or SearchX(Right(P), X)
+        endif
+    endif
+
+function CountX(P:BinTree, X:infotype) -> integer
+{ Mengirimkan banyaknya node dari P yang bernilai X }
+Algoritma
+    if (P = Nil) then
+        return 0
+    else
+        if (Info(P) = X) then
+            return 1 + CountX(Left(P), X) + CountX(Right(P), X)
+        else
+            return CountX(Left(P), X) + CountX(Right(P), X)
+        endif
+    endif
+
+function Level(P:BinTree, X:infotype) -> integer
+{ Mengirimkan level dari node X yang merupakan salah satu 
+  simpul dari pohon biner P. Akar(P) level-nya adalah 1. 
+  Pohon P tidak kosong }
+Algoritma
+    if (Info(P) = X) then
+        return 1
+    else
+        if SearchX(Left(P), X) then
+            return 1 + Level(Left(P), X)
+        else
+            return 1 + Level(Right(P), X)
+        endif
+    endif
+
+{===== MODIFIKASI POHON =====}
+
+procedure AddDaun(input/output P:BinTree, input X:infotype, 
+                  input Y:infotype, input Kiri:boolean)
+{ I.S. P tidak kosong, X adalah salah satu daun Pohon Biner P }
+{ F.S. P bertambah simpulnya, dengan Y sebagai anak kiri X 
+  (jika Kiri), atau sebagai anak Kanan X (jika not Kiri) }
+Deklarasi
+    Baru : BinTree
+Algoritma
+    if (P ≠ Nil) then
+        if (Info(P) = X) then
+            Alokasi(Baru)
+            if (Baru ≠ Nil) then
+                Info(Baru) <- Y
+                Left(Baru) <- Nil
+                Right(Baru) <- Nil
+                
+                if Kiri then
+                    Left(P) <- Baru
+                else
+                    Right(P) <- Baru
+                endif
+            endif
+        else
+            AddDaun(Left(P), X, Y, Kiri)
+            AddDaun(Right(P), X, Y, Kiri)
+        endif
+    endif
+
+procedure DelDaun(input/output P:BinTree, input X:infotype)
+{ I.S. P tidak kosong, X adalah salah satu daun }
+{ F.S. X dihapus dari P }
+Deklarasi
+    Hapus : BinTree
+Algoritma
+    if (P ≠ Nil) then
+        if (Left(P) ≠ Nil) and (Info(Left(P)) = X) and IsDaun(Left(P)) then
+            Hapus <- Left(P)
+            Left(P) <- Nil
+            Dealokasi(Hapus)
+        else if (Right(P) ≠ Nil) and (Info(Right(P)) = X) and IsDaun(Right(P)) then
+            Hapus <- Right(P)
+            Right(P) <- Nil
+            Dealokasi(Hapus)
+        else
+            DelDaun(Left(P), X)
+            DelDaun(Right(P), X)
+        endif
+        endif
+    endif
+
+procedure AddDaunTerkiri(input/output P:BinTree, input X:infotype)
+{ I.S. P boleh kosong }
+{ F.S. P bertambah simpulnya, dengan X sebagai simpul daun terkiri }
+Deklarasi
+    Baru : BinTree
+Algoritma
+    if (P = Nil) then
+        Alokasi(P)
+        if (P ≠ Nil) then
+            Info(P) <- X
+            Left(P) <- Nil
+            Right(P) <- Nil
+        endif
+    else
+        if (Left(P) = Nil) then
+            Alokasi(Baru)
+            if (Baru ≠ Nil) then
+                Info(Baru) <- X
+                Left(Baru) <- Nil
+                Right(Baru) <- Nil
+                Left(P) <- Baru
+            endif
+        else
+            AddDaunTerkiri(Left(P), X)
+        endif
+    endif
+
+procedure DelDaunTerkiri(input/output P:BinTree, output X:infotype)
+{ I.S. P tidak kosong }
+{ F.S. Daun terkiri P dihapus, dan X adalah info yang semula 
+  disimpan pada daun terkiri yang dihapus }
+Deklarasi
+    Hapus : BinTree
+Algoritma
+    if (P ≠ Nil) then
+        if (Left(P) = Nil) then
+            X <- Info(P)
+            Hapus <- P
+            P <- Right(P)
+            Dealokasi(Hapus)
+        else
+            DelDaunTerkiri(Left(P), X)
+        endif
+    endif
+
+procedure UpdateInfo(input/output P:BinTree, input XLama:infotype, 
+                     input XBaru:infotype)
+{ I.S. P terdefinisi }
+{ F.S. Semua node yang memiliki info XLama diubah menjadi XBaru }
+Algoritma
+    if (P ≠ Nil) then
+        if (Info(P) = XLama) then
+            Info(P) <- XBaru
+        endif
+        UpdateInfo(Left(P), XLama, XBaru)
+        UpdateInfo(Right(P), XLama, XBaru)
+    endif
