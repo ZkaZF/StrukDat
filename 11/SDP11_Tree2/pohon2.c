@@ -192,7 +192,48 @@ void DelDaunTerkiri(bintree *P, infotype X)
 void DelDaun(bintree *P, infotype X)
 {
     // kamus lokal
+    bintree temp;
+
     // algoritma
+    if (!IsEmptyTree(*P))
+    {
+        if (IsDaun(*P) && info(*P) == X)
+        {
+            temp = *P;
+            *P = NIL;
+            DealokasiTree(&temp);
+        }
+        else
+        {
+            if (!IsEmptyTree(GetLeft(*P)))
+            {
+                if (IsDaun(GetLeft(*P)) && info(GetLeft(*P)) == X)
+                {
+                    temp = GetLeft(*P);
+                    left(*P) = NIL;
+                    DealokasiTree(&temp);
+                }
+                else
+                {
+                    DelDaun(&left(*P), X);
+                }
+            }
+
+            if (!IsEmptyTree(GetRight(*P)))
+            {
+                if (IsDaun(GetRight(*P)) && info(GetRight(*P)) == X)
+                {
+                    temp = GetRight(*P);
+                    right(*P) = NIL;
+                    DealokasiTree(&temp);
+                }
+                else
+                {
+                    DelDaun(&right(*P), X);
+                }
+            }
+        }
+    }
 }
 
 /*procedure DeleteX (input/output P : BinTree, input X : infotype)
@@ -200,7 +241,48 @@ void DelDaun(bintree *P, infotype X)
 void DeleteX(bintree *P, infotype X)
 {
     // kamus lokal
+    bintree temp;
+
     // algoritma
+    if (!IsEmptyTree(*P))
+    {
+        if (info(*P) == X)
+        {
+            if (IsDaun(*P))
+            {
+                temp = *P;
+                *P = NIL;
+                DealokasiTree(&temp);
+            }
+            else if (IsUnerLeft(*P))
+            {
+                temp = *P;
+                *P = GetLeft(*P);
+                DealokasiTree(&temp);
+            }
+            else if (IsUnerRight(*P))
+            {
+                temp = *P;
+                *P = GetRight(*P);
+                DealokasiTree(&temp);
+            }
+            else
+            {
+                temp = GetLeft(*P);
+                while (!IsEmptyTree(GetRight(temp)))
+                {
+                    temp = GetRight(temp);
+                }
+                info(*P) = info(temp);
+                DeleteX(&left(*P), info(temp));
+            }
+        }
+        else
+        {
+            DeleteX(&left(*P), X);
+            DeleteX(&right(*P), X);
+        }
+    }
 }
 
 /*********** SOAL TAMBAHAN, DIKERJAKAN BILA LUANG *****************/
@@ -210,7 +292,19 @@ void DeleteX(bintree *P, infotype X)
 bintree BuildBalanceTree(int n)
 {
     // kamus lokal
+    infotype X;
+
     // algoritma
+    if (n == 0)
+    {
+        return NIL;
+    }
+    else
+    {
+        printf("Masukkan karakter: ");
+        scanf(" %c", &X);
+        return Tree(X, BuildBalanceTree(n / 2), BuildBalanceTree(n - n / 2 - 1));
+    }
 }
 
 /*PREDIKAT*/
@@ -219,7 +313,27 @@ bintree BuildBalanceTree(int n)
 boolean IsBalanceTree(bintree P)
 {
     // kamus lokal
+    int countLeft, countRight;
+
     // algoritma
+    if (IsEmptyTree(P))
+    {
+        return TRUE;
+    }
+    else
+    {
+        countLeft = NbElm(GetLeft(P));
+        countRight = NbElm(GetRight(P));
+
+        if (countLeft == countRight || countLeft == countRight + 1 || countLeft + 1 == countRight)
+        {
+            return IsBalanceTree(GetLeft(P)) && IsBalanceTree(GetRight(P));
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
 }
 
 /* function maxTree(P:bintree)->character
@@ -227,7 +341,35 @@ boolean IsBalanceTree(bintree P)
 int maxTree(bintree P)
 {
     // kamus lokal
+    int maxLeft, maxRight;
+
     // algoritma
+    if (IsEmptyTree(P))
+    {
+        return 0;
+    }
+    else if (IsDaun(P))
+    {
+        return info(P);
+    }
+    else
+    {
+        maxLeft = maxTree(GetLeft(P));
+        maxRight = maxTree(GetRight(P));
+
+        if (info(P) >= maxLeft && info(P) >= maxRight)
+        {
+            return info(P);
+        }
+        else if (maxLeft >= maxRight)
+        {
+            return maxLeft;
+        }
+        else
+        {
+            return maxRight;
+        }
+    }
 }
 
 /* function minTree(P:bintree)->character
@@ -235,7 +377,35 @@ int maxTree(bintree P)
 int minTree(bintree P)
 {
     // kamus lokal
+    int minLeft, minRight;
+
     // algoritma
+    if (IsEmptyTree(P))
+    {
+        return 127;
+    }
+    else if (IsDaun(P))
+    {
+        return info(P);
+    }
+    else
+    {
+        minLeft = minTree(GetLeft(P));
+        minRight = minTree(GetRight(P));
+
+        if (info(P) <= minLeft && info(P) <= minRight)
+        {
+            return info(P);
+        }
+        else if (minLeft <= minRight)
+        {
+            return minLeft;
+        }
+        else
+        {
+            return minRight;
+        }
+    }
 }
 
 /*{ Operator KHUSUS Binary Search Tree, node kiri selalu lebih kecil daripada node kanan }
@@ -245,7 +415,24 @@ int minTree(bintree P)
 boolean BSearch(bintree P, infotype X)
 {
     // kamus lokal
+
     // algoritma
+    if (IsEmptyTree(P))
+    {
+        return FALSE;
+    }
+    else if (info(P) == X)
+    {
+        return TRUE;
+    }
+    else if (X < info(P))
+    {
+        return BSearch(GetLeft(P), X);
+    }
+    else
+    {
+        return BSearch(GetRight(P), X);
+    }
 }
 
 /*function InsSearch (P : BinTree, X : infotype) → BinTree
@@ -253,7 +440,22 @@ boolean BSearch(bintree P, infotype X)
 bintree InsSearch(bintree P, infotype X)
 {
     // kamus lokal
+
     // algoritma
+    if (IsEmptyTree(P))
+    {
+        return Tree(X, NIL, NIL);
+    }
+    else if (X < info(P))
+    {
+        left(P) = InsSearch(GetLeft(P), X);
+        return P;
+    }
+    else
+    {
+        right(P) = InsSearch(GetRight(P), X);
+        return P;
+    }
 }
 
 /*procedure DelBtree (input/output P : BinTree, input X : infotype)
@@ -263,5 +465,49 @@ bintree InsSearch(bintree P, infotype X)
 void DelBtree(bintree *P, infotype X)
 {
     // kamus lokal
+    bintree temp;
+
     // algoritma
+    if (!IsEmptyTree(*P))
+    {
+        if (X < info(*P))
+        {
+            DelBtree(&left(*P), X);
+        }
+        else if (X > info(*P))
+        {
+            DelBtree(&right(*P), X);
+        }
+        else
+        {
+            if (IsDaun(*P))
+            {
+                temp = *P;
+                *P = NIL;
+                DealokasiTree(&temp);
+            }
+            else if (IsUnerLeft(*P))
+            {
+                temp = *P;
+                *P = GetLeft(*P);
+                DealokasiTree(&temp);
+            }
+            else if (IsUnerRight(*P))
+            {
+                temp = *P;
+                *P = GetRight(*P);
+                DealokasiTree(&temp);
+            }
+            else
+            {
+                temp = GetLeft(*P);
+                while (!IsEmptyTree(GetRight(temp)))
+                {
+                    temp = GetRight(temp);
+                }
+                info(*P) = info(temp);
+                DelBtree(&left(*P), info(temp));
+            }
+        }
+    }
 }
