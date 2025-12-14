@@ -124,6 +124,64 @@ int main()
       printf("    Tinggi(Q): %d\n", Tinggi(Q));
       printf("    NbElmTree(Q): %d\n\n", NbElmTree(Q));
 
+      // Test Linearisasi Pohon
+      printf("16. Testing Linearisasi Pohon:\n");
+      List1 LPrefix, LPosfix, LInfix, LBFS;
+
+      printf("    a. Linear Prefix (Akar-Kiri-Kanan): ");
+      LPrefix = LinearPrefix(P);
+      PrintList(LPrefix);
+
+      printf("    b. Linear Posfix (Kiri-Kanan-Akar): ");
+      LPosfix = LinearPosfix(P);
+      PrintList(LPosfix);
+
+      printf("    c. Linear Infix (Kiri-Akar-Kanan): ");
+      LInfix = LinearInfix(P);
+      PrintList(LInfix);
+
+      printf("    d. Linear Breadth First Search: ");
+      LBFS = LinearBreadthFS(P);
+      PrintList(LBFS);
+      printf("\n");
+
+      // Test Pconcat
+      printf("17. Testing Pconcat (menyambung 2 list):\n");
+      List1 L1, L2;
+      CreateList(&L1);
+      CreateList(&L2);
+      InsertVLast(&L1, 'A');
+      InsertVLast(&L1, 'B');
+      InsertVLast(&L2, 'C');
+      InsertVLast(&L2, 'D');
+      printf("    List1 awal: ");
+      PrintList(L1);
+      printf("    List2: ");
+      PrintList(L2);
+      Pconcat(&L1, L2);
+      printf("    List1 setelah Pconcat: ");
+      PrintList(L1);
+      printf("\n");
+
+      // Test Fconcat
+      printf("18. Testing Fconcat (concat tanpa ubah list asli):\n");
+      List1 L3, L4, L5;
+      CreateList(&L3);
+      CreateList(&L4);
+      InsertVLast(&L3, 'X');
+      InsertVLast(&L3, 'Y');
+      InsertVLast(&L4, 'Z');
+      printf("    List3: ");
+      PrintList(L3);
+      printf("    List4: ");
+      PrintList(L4);
+      L5 = Fconcat(L3, L4);
+      printf("    Hasil Fconcat: ");
+      PrintList(L5);
+      printf("    List3 masih: ");
+      PrintList(L3);
+      printf("\n");
+
       printf("===== TESTING SELESAI =====\n");
 
       return 0;

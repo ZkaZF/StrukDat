@@ -393,8 +393,18 @@ int CountLevelT(bintree3 P, int T)
 void Pconcat(List1 *Asli, List1 Tambahan)
 {
     // kamus lokal
+    address P, Last;
 
     // algoritma
+    if (!IsEmptyList(Tambahan))
+    {
+        P = First(Tambahan);
+        while (P != NIL)
+        {
+            InsertVLast(Asli, info(P));
+            P = next(P);
+        }
+    }
 }
 
 /*function fconcat( Asli:List1, Tambahan:List1) -> List1 */
@@ -403,8 +413,29 @@ void Pconcat(List1 *Asli, List1 Tambahan)
 List1 Fconcat(List1 Asli, List1 Tambahan)
 {
     // kamus lokal
+    List1 Hasil;
+    address P;
 
     // algoritma
+    CreateList(&Hasil);
+
+    // Copy list Asli ke Hasil
+    P = First(Asli);
+    while (P != NIL)
+    {
+        InsertVLast(&Hasil, info(P));
+        P = next(P);
+    }
+
+    // Copy list Tambahan ke Hasil
+    P = First(Tambahan);
+    while (P != NIL)
+    {
+        InsertVLast(&Hasil, info(P));
+        P = next(P);
+    }
+
+    return Hasil;
 }
 
 /*** LINEARISASI POHON ***/
@@ -413,8 +444,30 @@ List1 Fconcat(List1 Asli, List1 Tambahan)
 List1 LinearPrefix(bintree3 P)
 {
     // kamus lokal
+    List1 L, LKiri, LKanan;
 
     // algoritma
+    CreateList(&L);
+
+    if (!IsEmptyTree(P))
+    {
+        // Prefix: Akar, Kiri, Kanan
+        InsertVLast(&L, info(P)); // Akar
+
+        if (!IsEmptyTree(left(P)))
+        {
+            LKiri = LinearPrefix(left(P));
+            Pconcat(&L, LKiri);
+        }
+
+        if (!IsEmptyTree(right(P)))
+        {
+            LKanan = LinearPrefix(right(P));
+            Pconcat(&L, LKanan);
+        }
+    }
+
+    return L;
 }
 
 /*function linearPosfix(P:bintree3) -> List1
@@ -422,8 +475,30 @@ List1 LinearPrefix(bintree3 P)
 List1 LinearPosfix(bintree3 P)
 {
     // kamus lokal
+    List1 L, LKiri, LKanan;
 
     // algoritma
+    CreateList(&L);
+
+    if (!IsEmptyTree(P))
+    {
+        // Posfix: Kiri, Kanan, Akar
+        if (!IsEmptyTree(left(P)))
+        {
+            LKiri = LinearPosfix(left(P));
+            Pconcat(&L, LKiri);
+        }
+
+        if (!IsEmptyTree(right(P)))
+        {
+            LKanan = LinearPosfix(right(P));
+            Pconcat(&L, LKanan);
+        }
+
+        InsertVLast(&L, info(P)); // Akar
+    }
+
+    return L;
 }
 
 /*function linearInfix(P:bintree3) -> List1
@@ -431,8 +506,47 @@ List1 LinearPosfix(bintree3 P)
 List1 LinearInfix(bintree3 P)
 {
     // kamus lokal
+    List1 L, LKiri, LKanan;
 
     // algoritma
+    CreateList(&L);
+
+    if (!IsEmptyTree(P))
+    {
+        // Infix: Kiri, Akar, Kanan
+        if (!IsEmptyTree(left(P)))
+        {
+            LKiri = LinearInfix(left(P));
+            Pconcat(&L, LKiri);
+        }
+
+        InsertVLast(&L, info(P)); // Akar
+
+        if (!IsEmptyTree(right(P)))
+        {
+            LKanan = LinearInfix(right(P));
+            Pconcat(&L, LKanan);
+        }
+    }
+
+    return L;
+}
+
+// Helper function untuk LinearBreadthFS
+void addLevelToList(bintree3 node, int level, List1 *list)
+{
+    if (!IsEmptyTree(node))
+    {
+        if (level == 1)
+        {
+            InsertVLast(list, info(node));
+        }
+        else
+        {
+            addLevelToList(left(node), level - 1, list);
+            addLevelToList(right(node), level - 1, list);
+        }
+    }
 }
 
 /*function linearBreadthFS(P:bintree3) -> List1
@@ -440,6 +554,20 @@ List1 LinearInfix(bintree3 P)
 List1 LinearBreadthFS(bintree3 P)
 {
     // kamus lokal
+    List1 L;
+    int i, tinggi;
 
     // algoritma
+    CreateList(&L);
+
+    if (!IsEmptyTree(P))
+    {
+        tinggi = Tinggi(P);
+        for (i = 1; i <= tinggi + 1; i++)
+        {
+            addLevelToList(P, i, &L);
+        }
+    }
+
+    return L;
 }
